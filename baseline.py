@@ -9,3 +9,12 @@ def cringe():
 
 
 cringe()
+
+room = 222
+for i in range(1, 10):
+    print("I am staying in room:", room)
+    room += 1
+
+goon = "goon"
+
+print("I am", goon)
