@@ -14,7 +14,7 @@ def convert_to_csv(input_path, output_path, delimiter=" "):
     df = pd.read_csv(input_path, output_path, delimiter=delimiter) # Turns .txt file into a Pandas Data Frame
     df.to_csv(output_path, index=False) # Using Pandas Library, we can then save it in a CSV format
 
-def convert_to_json(input_path, output_path, delimiter=" "):
+def convert_to_json(input_path, output_path):
     """
     Converts a .txt file to a .json file
     :param input_path: the path of "expenses.txt" file
