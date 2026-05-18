@@ -55,3 +55,16 @@ Date, Category, Amount, Description
 >>
 >> * Budgeting Feature:
 >>   * Allow users to set a monthly budget and display a warning if they exceed it.
+
+## How the work is organized
+
+* Three folders will be created:
+  * One housing the Basic Features outlined.
+  * The second will hold the Advanced Features outlined (excluding GUI)
+  * The third will have the GUI elements required
+
+
+## How the output should look
+* Each folder will hold each function outlined individually
+  * One functuon per file, imported onto main file
+* The output will be in a main file on the project "home page"
