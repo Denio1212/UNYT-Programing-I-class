@@ -58,7 +58,7 @@ Date, Category, Amount, Description
 
 ## How the work is organized
 
-* Three folders will be created:
+* Three directories will be created:
   * One housing the Basic Features outlined.
   * The second will hold the Advanced Features outlined (excluding GUI)
   * The third will have the GUI elements required
