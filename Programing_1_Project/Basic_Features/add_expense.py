@@ -1,4 +1,5 @@
 #here is the add expense funion/ code section of the expense tracker app
+from xml.dom.minidom import NamedNodeMap
 
 from Basic_Features.error_handling import does_file_exist
 from Basic_Features.error_handling import valid_date
@@ -14,7 +15,6 @@ def add_expense(file_name, date, category, amount, description):
 
     date = clean_text(date)
     category = clean_text(category)
-    amount = clean_text(amount)
     description = clean_text(description)
 
     if not valid_date(date):
