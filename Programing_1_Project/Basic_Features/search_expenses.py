@@ -9,7 +9,7 @@ from Basic_Features.error_handling import format_expense_list
 
 # This function searches expenses by date, category, amount range, or date range.
 # The search_type should be: 'date', 'category', 'amount_range', or 'date_range'.
-def search_expenses(file_name, search_type, first_value, second_value=''):
+def search_expenses(file_name, search_type, first_value, second_value = ""):
 
     expenses = read_expenses(file_name)
 
@@ -25,7 +25,7 @@ def search_expenses(file_name, search_type, first_value, second_value=''):
     if search_type == 'date':
 
         if not valid_date(first_value):
-            return 'Invalid date. Please use YYYY-MM-DD.'
+            return print('Invalid date. Please use YYYY-MM-DD.')
 
         for expense in expenses:
             if expense['Date'] == first_value:
@@ -34,22 +34,22 @@ def search_expenses(file_name, search_type, first_value, second_value=''):
     elif search_type == 'category':
 
         if first_value == '':
-            return 'Category cannot be empty.'
+            return print('Category cannot be empty.')
 
         for expense in expenses:
-            if expense['Category'].lower() == first_value.lower():
+            if first_value.lower() in expense['Category'].lower():
                 found.append(expense)
 
     elif search_type == 'amount_range':
 
         if not valid_amount(first_value) or not valid_amount(second_value):
-            return 'Invalid amount range.'
+            return print('Invalid amount range.')
 
         minimum = float(first_value)
         maximum = float(second_value)
 
         if minimum > maximum:
-            return 'Minimum amount cannot be greater than maximum amount.'
+            return print('Minimum amount cannot be greater than maximum amount.')
 
         for expense in expenses:
 
@@ -61,22 +61,22 @@ def search_expenses(file_name, search_type, first_value, second_value=''):
     elif search_type == 'date_range':
 
         if not valid_date(first_value) or not valid_date(second_value):
-            return 'Invalid date range. Please use YYYY-MM-DD.'
+            return print('Invalid date range. Please use YYYY-MM-DD.')
 
         if first_value > second_value:
-            return 'Start date cannot be after end date.'
+            return print('Start date cannot be after end date.')
 
         for expense in expenses:
             if expense['Date'] >= first_value and expense['Date'] <= second_value:
                 found.append(expense)
 
     else:
-        return 'Invalid search type.'
+        raise ValueError('Invalid search type, please enter the following: date, category, amount_range, or date_range.')
 
     if len(found) == 0:
-        return 'No matching expenses found.'
+        return print('No matching expenses found.')
 
     output = '--- Search Results ---\n\n'
     output += format_expense_list(found)
 
-    return output
+    return print(output)

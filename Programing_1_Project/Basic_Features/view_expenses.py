@@ -16,4 +16,4 @@ def view_expenses(file_name):
     output = '--- All Expenses ---\n\n'
     output += format_expense_list(expenses)
 
-    return output
+    return print(output)
