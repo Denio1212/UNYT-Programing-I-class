@@ -1,14 +1,12 @@
 """
-The GUI interface for the Project. Will display initial welcome message.
-Afterwards it will ask for an input which will determine which function it will use.
+The GUI interface for the Project. Will display an initial welcome message.
+Afterwards, it will ask for an input which will determine which function it will use.
 If Advanced is typed, it will open another GUI window with the advanced settings.
-Functions will be extracted from files as imports. (WIP)
+Functions will be extracted from files as imports.
 """
 import os
 import datetime
 import sys
-
-from numpy import dtype
 
 current_dir = os.path.dirname(os.path.abspath(__file__))
 programing_1_project_dir = os.path.abspath(os.path.join(current_dir, "../"))
@@ -28,6 +26,7 @@ from Basic_Features.update_expense import update_expense
 from Advanced_Features.Monthly_Expense_Summary import monthly_expense_summary
 from Advanced_Features.Budgeting_Feature import budgeting
 from Advanced_Features.Sorting_Feature import sort_expenses
+
 # ------- Base GUI ------- #
 def GUI():
     """
@@ -100,7 +99,6 @@ def GUI():
                 window.close()
                 view_expenses("../expenses.txt")
 
-
             if values["-IN-"] == "4":
                 window.close()
                 search_term_2 = ''
@@ -148,7 +146,7 @@ def GUI():
                 layout = [
                     [psg.Text("Welcome to the Advanced Features, the following options are available:")],
                     [psg.Text("-- For Monthly Expense Summary, press 1")],
-                    [psg.Text("WIP")],
+                    [psg.Text("-- To Sort Expenses, press 2")],
                     [psg.Text("-- For Exporting to JSON/CSV, press 3")],
                     [psg.Text("WIP")],
                     [psg.Text("-- For Budgeting Feature, press 5")],
@@ -174,9 +172,9 @@ def GUI():
                     ]
                     sort_window = psg.Window("Sorting Expenses", sort_layout, finalize=True)
                     event_sort, values_sort = sort_window.read()
-                    if values_sort["asc_desc"] in "Ascending".lower():
+                    if values_sort["asc_desc"].lower() in "Ascending".lower():
                         asc_desc = True
-                    elif values_sort["asc_desc"] in "Descending".lower():
+                    elif values_sort["asc_desc"].lower() in "Descending".lower():
                         asc_desc = False
                     else:
                         raise ValueError("Invalid input. Please enter either Ascending or Descending.")
@@ -188,11 +186,11 @@ def GUI():
 
                 if values_advanced["-IN-"] == "3":
                     choice = input("Do you want to export to JSON, CSV or exit?: ")
-                    if choice.lower() == "json":
+                    if choice.lower() in "json":
                         convert_to_json("../expenses.txt", "../expenses.json")
                         print("JSON file has been created successfully!")
                         break
-                    elif choice.lower() == "csv":
+                    elif choice.lower() in "csv":
                         convert_to_csv("../expenses.txt", "../expenses.csv")
                         print("CSV file has been created successfully!")
                         break
