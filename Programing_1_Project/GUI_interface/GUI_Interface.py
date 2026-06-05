@@ -8,6 +8,8 @@ import os
 import datetime
 import sys
 
+from numpy import dtype
+
 current_dir = os.path.dirname(os.path.abspath(__file__))
 programing_1_project_dir = os.path.abspath(os.path.join(current_dir, "../"))
 
@@ -25,6 +27,7 @@ from Basic_Features.search_expenses import search_expenses
 from Basic_Features.update_expense import update_expense
 from Advanced_Features.Monthly_Expense_Summary import monthly_expense_summary
 from Advanced_Features.Budgeting_Feature import budgeting
+from Advanced_Features.Sorting_Feature import sort_expenses
 # ------- Base GUI ------- #
 def GUI():
     """
@@ -156,10 +159,33 @@ def GUI():
                 event_advanced, values_advanced = window_advanced.read()
                 if event_advanced == psg.WIN_CLOSED or event_advanced == "Exit":
                     break
+
                 if values_advanced["-IN-"] == "1":
                     window_advanced.close()
                     monthly_expense_summary("../expenses.txt")
                     break
+
+                if values_advanced["-IN-"] == "2":
+                    window_advanced.close()
+                    sort_layout = [
+                        [psg.Text("Please enter the type of sort: Supported keywords are 'Date', 'Category' and 'Amount'.\n"), psg.Input(key="sort_type")],
+                        [psg.Text("Ascending or Descending? (Defaults to Descending)"), psg.Input(key="asc_desc")],
+                        [psg.Exit(), psg.Button("Confirm", bind_return_key=True)],
+                    ]
+                    sort_window = psg.Window("Sorting Expenses", sort_layout, finalize=True)
+                    event_sort, values_sort = sort_window.read()
+                    if values_sort["asc_desc"] in "Ascending".lower():
+                        asc_desc = True
+                    elif values_sort["asc_desc"] in "Descending".lower():
+                        asc_desc = False
+                    else:
+                        raise ValueError("Invalid input. Please enter either Ascending or Descending.")
+                    if event_sort == psg.WIN_CLOSED or event_sort == "Exit":
+                        break
+                    if event_sort == "Confirm":
+                        sort_expenses("../expenses.txt", values_sort["sort_type"], asc_desc)
+                        break
+
                 if values_advanced["-IN-"] == "3":
                     choice = input("Do you want to export to JSON, CSV or exit?: ")
                     if choice.lower() == "json":
@@ -181,11 +207,13 @@ def GUI():
                     ]
                     budget_window = psg.Window("Budgeting", budget_layout, finalize=True)
                     event_budget, values_budget = budget_window.read()
-                    limit = float(values_budget["budget_limit"])
-                    budgeting("../expenses.txt", limit)
-                    print("Your current budget limit is ${0}".format(limit))
-
-                    break
+                    if event_budget == psg.WIN_CLOSED or event_budget == "Exit":
+                        break
+                    if event_budget == "Confirm":
+                        limit = float(values_budget["budget_limit"])
+                        budgeting("../expenses.txt", limit)
+                        print("Your current budget limit is ${0}".format(limit))
+                        break
 
         elif event == psg.WIN_CLOSED or event == "Exit":
             print("Goodbye!")
