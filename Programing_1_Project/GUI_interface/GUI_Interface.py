@@ -26,6 +26,7 @@ from Basic_Features.update_expense import update_expense
 from Advanced_Features.Monthly_Expense_Summary import monthly_expense_summary
 from Advanced_Features.Budgeting_Feature import budgeting
 from Advanced_Features.Sorting_Feature import sort_expenses
+from Advanced_Features.Visualization import visualize_data
 
 # ------- Base GUI ------- #
 def GUI():
@@ -48,6 +49,9 @@ def GUI():
     while True:
         event, values = window.read()
         if event == "Confirm":
+            if values["-IN-"].lower() == "Exit".lower():
+                print("Goodbye!")
+                break
             file_name = "../expenses.txt"
             limit = 0
             if not limit == 0:
@@ -101,15 +105,44 @@ def GUI():
 
             if values["-IN-"] == "4":
                 window.close()
-                search_term_2 = ''
-                search_type = input("Enter the type of search (date, category, amount_range, date_range): ")
-                if search_type not in ["date", "category", "amount_range", "date_range"]:
-                    raise ValueError("Invalid search type. Please enter date, category, amount_range, or date_range.")
-                elif search_type in ["date_range", "amount_range"]:
-                    search_term = input("Enter the first search term (The lower bound of the range): ")
-                    search_term_2 = input("Enter the second search term (The upper bound of the range): ")
-                else:
-                    search_term = input("Enter the search term (e.g If date was used as search type, enter the date in YYYY-MM-DD format): ")
+                search_term_2 = ""
+                search_layout = [
+                    [psg.Text("Enter the type of search: Supported keywords are 'date', 'category', 'amount_range', 'date_range'."), psg.Input(key="search_type")],
+                    [psg.Exit(), psg.Button("Confirm", bind_return_key=True)]
+                ]
+                search_window = psg.Window("Search Expenses", search_layout, finalize=True)
+                event_search, values_search = search_window.read()
+                search_type = values_search["search_type"]
+                if event_search == psg.WIN_CLOSED or event_search == "Exit":
+                    break
+                elif event_search == "Confirm":
+                    search_window.close()
+                    if search_type not in ["date", "category", "amount_range", "date_range"]:
+                        raise ValueError("Invalid search type. Please enter date, category, amount_range, or date_range.")
+                    elif search_type in ["date_range", "amount_range"]:
+                        range_layout = [
+                            [psg.Text("Enter the lower bound of the range: "), psg.Input(key="lower_bound")],
+                            [psg.Text("Enter the upper bound of the range: "), psg.Input(key="upper_bound")],
+                            [psg.Exit(), psg.Button("Confirm", bind_return_key=True)]
+                        ]
+                        range_window = psg.Window("Search Range", range_layout, finalize=True)
+                        event_range, values_range = range_window.read()
+                        if event_range == psg.WIN_CLOSED or event_range == "Exit":
+                            break
+                        if event_range == "Confirm":
+                            search_term = values_range["lower_bound"]
+                            search_term_2 = values_range["upper_bound"]
+                    else:
+                        term_layout = [
+                            [psg.Text("Enter the search term (e.g if Date was entered, enter the date in YYYY-MM-DD format): "), psg.Input(key="search_term")],
+                            [psg.Exit(), psg.Button("Confirm", bind_return_key=True)]
+                        ]
+                        term_window = psg.Window("Search Term", term_layout, finalize=True)
+                        event_term, values_term = term_window.read()
+                        if event_term == psg.WIN_CLOSED or event_term == "Exit":
+                            break
+                        if event_term == "Confirm":
+                            search_term = values_term["search_term"]
                 search_expenses("../expenses.txt", search_type, search_term, search_term_2)
                 break
 
@@ -148,7 +181,7 @@ def GUI():
                     [psg.Text("-- For Monthly Expense Summary, press 1")],
                     [psg.Text("-- To Sort Expenses, press 2")],
                     [psg.Text("-- For Exporting to JSON/CSV, press 3")],
-                    [psg.Text("WIP")],
+                    [psg.Text("-- For Graph Visualization, press 4")],
                     [psg.Text("-- For Budgeting Feature, press 5")],
                     [psg.Text("your Input: "), psg.Input(key="-IN-")],
                     [psg.Exit(), psg.Button("Confirm", bind_return_key=True)],
@@ -197,6 +230,11 @@ def GUI():
                     else:
                         raise ValueError("Invalid choice. Please enter JSON or CSV.")
 
+                if values_advanced["-IN-"] == "4":
+                    window_advanced.close()
+                    visualize_data(file_name)
+                    break
+
                 if values_advanced["-IN-"] == "5":
                     window_advanced.close()
                     budget_layout = [
@@ -216,6 +254,3 @@ def GUI():
         elif event == psg.WIN_CLOSED or event == "Exit":
             print("Goodbye!")
             break
-
-
-GUI()

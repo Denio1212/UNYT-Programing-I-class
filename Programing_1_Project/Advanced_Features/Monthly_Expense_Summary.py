@@ -5,7 +5,7 @@ This file will be used to calculate:
 """
 import pandas as pd
 
-file_path = "../expenses.txt"
+
 def monthly_expense_summary(file_path):
     """
     calculate the monthly expense summary

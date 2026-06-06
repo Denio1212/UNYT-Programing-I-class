@@ -3,8 +3,6 @@ Allows the user to sort expenses by date, ammount and category
 """
 import pandas as pd
 
-file_name = ("../expenses.txt")
-
 def sort_expenses(file_name, sort_type, asc_desc = 'False'):
     """
     Sorts expenses by date, amount and category
