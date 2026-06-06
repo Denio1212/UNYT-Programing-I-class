@@ -52,33 +52,36 @@ def GUI():
             if values["-IN-"].lower() == "Exit".lower():
                 print("Goodbye!")
                 break
-            file_name = "../expenses.txt"
+            file_name = "expenses.txt"
             limit = 0
             if not limit == 0:
                 budgeting(file_name, limit)
             if values["-IN-"] == "1":
-                window.disappear()
-                layout_add_expense = [
-                    [psg.Text("Enter the category of the expense "), psg.Input(key="category")],
-                    [psg.Text("Enter the amount of the expense($): "), psg.Input(key="amount")],
-                    [psg.Text("Enter a brief description of the expense:"), psg.Input(key="description")],
-                    [psg.Text("Enter the date of the expense (YYYY-MM-DD): "), psg.Input(key="date")],
-                    [psg.Exit(), psg.Button("Confirm", bind_return_key=True)]
-                ]
-                add_window = psg.Window("Add Expense", layout_add_expense, finalize=True)
-                event_add, values_add = add_window.read()
-                if event_add == psg.WIN_CLOSED or event_add == "Exit":
-                    break
-                if event_add == "Confirm":
-                    try:
-                        float(values_add["amount"])
-                    except ValueError:
-                        raise ValueError("Amount must be a number.")
-                    add_expense(file_name, values_add["date"], values_add['category'],
-                                values_add["amount"], values_add['description'])
-                    print("Expense added successfully!")
-                    view_expenses(file_name)
-                    break
+                window.close()
+                while True:
+                    layout_add_expense = [
+                        [psg.Text("Enter the category of the expense "), psg.Input(key="category")],
+                        [psg.Text("Enter the amount of the expense($): "), psg.Input(key="amount")],
+                        [psg.Text("Enter a brief description of the expense:"), psg.Input(key="description")],
+                        [psg.Text("Enter the date of the expense (YYYY-MM-DD): "), psg.Input(key="date")],
+                        [psg.Exit(), psg.Button("Confirm", bind_return_key=True)]
+                    ]
+                    add_window = psg.Window("Add Expense", layout_add_expense, finalize=True)
+                    event_add, values_add = add_window.read()
+                    add_window.close()
+                    if event_add == psg.WIN_CLOSED or event_add == "Exit":
+                        break
+                    elif event_add == "Confirm":
+                        try:
+                            float(values_add["amount"])
+                        except ValueError:
+                            psg.popup_error("Invalid amount. Please enter a valid number.")
+                            continue
+                        add_expense(file_name, values_add["date"], values_add['category'],
+                        values_add["amount"], values_add['description'])
+                        print("Expense added successfully!")
+                        view_expenses(file_name)
+                        break
 
             if values["-IN-"] == "2":
                 window.close()
@@ -101,7 +104,7 @@ def GUI():
 
             if values["-IN-"] == "3":
                 window.close()
-                view_expenses("../expenses.txt")
+                view_expenses(file_name)
 
             if values["-IN-"] == "4":
                 window.close()
@@ -143,12 +146,12 @@ def GUI():
                             break
                         if event_term == "Confirm":
                             search_term = values_term["search_term"]
-                search_expenses("../expenses.txt", search_type, search_term, search_term_2)
+                search_expenses(file_name, search_type, search_term, search_term_2)
                 break
 
             if values["-IN-"] == "5":
                 window.close()
-                view_expenses("../expenses.txt")
+                view_expenses(file_name)
                 layout_update = [
                     [psg.Text("Enter expense number to update: "), psg.Input(key="new_expense")],
                     [psg.Text("Enter new date (YYYY-MM-DD): "), psg.Input(key="new_date")],
@@ -169,9 +172,9 @@ def GUI():
                     raise ValueError("Invalid amount. Please enter a positive number.")
                 if values_update["new_description"] == '':
                     raise ValueError("Description cannot be empty.")
-                update_expense("../expenses.txt", values_update["new_expense"], values_update["new_date"], values_update["new_category"], values_update["new_amount"], values_update["new_description"])
+                update_expense(file_name, values_update["new_expense"], values_update["new_date"], values_update["new_category"], values_update["new_amount"], values_update["new_description"])
                 print("Expense updated successfully!")
-                view_expenses("../expenses.txt")
+                view_expenses(file_name)
                 break
 
             elif values["-IN-"] == "6":
@@ -193,7 +196,7 @@ def GUI():
 
                 if values_advanced["-IN-"] == "1":
                     window_advanced.close()
-                    monthly_expense_summary("../expenses.txt")
+                    monthly_expense_summary(file_name)
                     break
 
                 if values_advanced["-IN-"] == "2":
@@ -214,18 +217,26 @@ def GUI():
                     if event_sort == psg.WIN_CLOSED or event_sort == "Exit":
                         break
                     if event_sort == "Confirm":
-                        sort_expenses("../expenses.txt", values_sort["sort_type"], asc_desc)
+                        sort_expenses(file_name, values_sort["sort_type"], asc_desc)
                         break
 
                 if values_advanced["-IN-"] == "3":
-                    choice = input("Do you want to export to JSON, CSV or exit?: ")
+                    window_advanced.close()
+                    choice_layout = [
+                        [psg.Text("Please select the format you would like to export to: Supported keywords are 'JSON' and 'CSV'."), psg.Input(key="choice")],
+                        [psg.Exit(), psg.Button("Confirm", bind_return_key=True)],
+                    ]
+                    choice_window = psg.Window("Export Format", choice_layout, finalize=True)
+                    event_choice, values_choice = choice_window.read()
+                    choice = values_choice["choice"]
+                    choice_window.close()
                     if choice.lower() in "json":
-                        convert_to_json("../expenses.txt", "../expenses.json")
-                        print("JSON file has been created successfully!")
+                        convert_to_json(file_name, "expenses.json")
+                        print("JSON file has been created/updated successfully!")
                         break
                     elif choice.lower() in "csv":
-                        convert_to_csv("../expenses.txt", "../expenses.csv")
-                        print("CSV file has been created successfully!")
+                        convert_to_csv(file_name, "expenses.csv")
+                        print("CSV file has been created/updated successfully!")
                         break
                     else:
                         raise ValueError("Invalid choice. Please enter JSON or CSV.")
@@ -247,7 +258,7 @@ def GUI():
                         break
                     if event_budget == "Confirm":
                         limit = float(values_budget["budget_limit"])
-                        budgeting("../expenses.txt", limit)
+                        budgeting(file_name, limit)
                         print("Your current budget limit is ${0}".format(limit))
                         break
 
