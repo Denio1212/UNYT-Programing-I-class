@@ -8,4 +8,6 @@ def budgeting(file_path, limit):
     summary = df["Amount"].sum()
     print(f"Your total spending is: ${summary:,.2f}")
     if summary > limit:
-        print(f"You have exceeded your budget by {summary - limit:,.2f}. Please review your spending, after all, money does not grow on trees.")
+        print(f"You have exceeded your budget by {summary - limit:,.2f}. Please revise your spending, after all, money does not grow on trees.")
+    else:
+        print("You are currently within your budget. Keep up the good work!")

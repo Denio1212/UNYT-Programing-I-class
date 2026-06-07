@@ -29,10 +29,20 @@ from Advanced_Features.Sorting_Feature import sort_expenses
 from Advanced_Features.Visualization import visualize_data
 
 # ------- Base GUI ------- #
-def GUI():
+def GUI(limit=0.0):
     """
     Home of the GUI
     """
+    limit_file = "GUI_Interface/budget_limit.txt"
+    if os.path.exists(limit_file):
+        with open(limit_file, "r") as file:
+            try:
+                limit = float(file.read().strip())
+            except ValueError:
+                limit = 0.0
+    else:
+        with open(limit_file, "w") as file:
+            file.write("0.0")
     layout = [
         [psg.Text("Welcome to the Project GUI, the following options are available:")],
         [psg.Text("-- To add an expense, type: 1")],
@@ -45,7 +55,6 @@ def GUI():
         [psg.Exit(), psg.Button("Confirm", bind_return_key=True)],
     ]
     window = psg.Window("Project GUI", layout, finalize=True)
-
     while True:
         event, values = window.read()
         if event == "Confirm":
@@ -53,9 +62,6 @@ def GUI():
                 print("Goodbye!")
                 break
             file_name = "expenses.txt"
-            limit = 0
-            if not limit == 0:
-                budgeting(file_name, limit)
             if values["-IN-"] == "1":
                 window.close()
                 while True:
@@ -81,6 +87,7 @@ def GUI():
                         values_add["amount"], values_add['description'])
                         print("Expense added successfully!")
                         view_expenses(file_name)
+                        budgeting(file_name, limit)
                         break
 
             if values["-IN-"] == "2":
@@ -101,10 +108,13 @@ def GUI():
                     del_expense_number = int(del_expense_number)
                     delete_expense(file_name, del_expense_number)
                     print("Expense deleted successfully!")
+                    budgeting(file_name, limit)
+                    break
 
             if values["-IN-"] == "3":
                 window.close()
                 view_expenses(file_name)
+                budgeting(file_name, limit)
 
             if values["-IN-"] == "4":
                 window.close()
@@ -118,6 +128,7 @@ def GUI():
                 search_type = values_search["search_type"]
                 if event_search == psg.WIN_CLOSED or event_search == "Exit":
                     break
+
                 elif event_search == "Confirm":
                     search_window.close()
                     if search_type not in ["date", "category", "amount_range", "date_range"]:
@@ -175,6 +186,7 @@ def GUI():
                 update_expense(file_name, values_update["new_expense"], values_update["new_date"], values_update["new_category"], values_update["new_amount"], values_update["new_description"])
                 print("Expense updated successfully!")
                 view_expenses(file_name)
+                budgeting(file_name, limit)
                 break
 
             elif values["-IN-"] == "6":
@@ -258,6 +270,8 @@ def GUI():
                         break
                     if event_budget == "Confirm":
                         limit = float(values_budget["budget_limit"])
+                        with open(limit_file, "w") as file:
+                            file.write(str(limit))
                         budgeting(file_name, limit)
                         print("Your current budget limit is ${0}".format(limit))
                         break
