@@ -59,6 +59,7 @@ def GUI(limit=0.0):
         event, values = window.read()
         if event == "Confirm":
             if values["-IN-"].lower() == "Exit".lower():
+                window.close()
                 print("Goodbye!")
                 break
             file_name = "expenses.txt"
@@ -220,6 +221,7 @@ def GUI(limit=0.0):
                     ]
                     sort_window = psg.Window("Sorting Expenses", sort_layout, finalize=True)
                     event_sort, values_sort = sort_window.read()
+                    sort_window.close()
                     if values_sort["asc_desc"].lower() in "Ascending".lower():
                         asc_desc = True
                     elif values_sort["asc_desc"].lower() in "Descending".lower():
@@ -277,5 +279,6 @@ def GUI(limit=0.0):
                         break
 
         elif event == psg.WIN_CLOSED or event == "Exit":
+            window.close()
             print("Goodbye!")
             break
