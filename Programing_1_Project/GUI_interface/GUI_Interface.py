@@ -44,7 +44,7 @@ def GUI(limit=0.0):
         with open(limit_file, "w") as file:
             file.write("0.0")
     layout = [
-        [psg.Text("Welcome to the Project GUI, the following options are available:")],
+        [psg.Text("Welcome to the PEP (Personal Expense Program), the following options are available:")],
         [psg.Text("-- To add an expense, type: 1")],
         [psg.Text("-- To delete an expense, type: 2")],
         [psg.Text("-- To view all current expenses, type: 3")],
